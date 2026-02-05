@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.25, maximum-scale=3.0, user-scalable=yes">
     <meta name="description" content="2026 Planning Dashboard with weekly tracking">
     <meta name="theme-color" content="#1a4d2e">
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIjIwMjYgVG8tRG8gTGlzdCIsCiAgInNob3J0X25hbWUiOiAiMjAyNiBQbGFucyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzFhNGQyZSIsCiAgInRoZW1lX2NvbG9yIjogIiMxYTRkMmUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9Jzk2JyB5PSc5NicgZm9udC1zaXplPSc4MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInJTNFJTNDcmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMjU2JyBmb250LXNpemU9JzIwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
@@ -74,6 +74,29 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             overflow-x: auto;
             position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-container.zoomed-out {
+            padding: 5px;
+            font-size: 0.5em;
+        }
+        
+        .timeline-container.zoomed-out .week-label {
+            min-height: 30px;
+            padding: 4px;
+            font-size: 0.7em;
+        }
+        
+        .timeline-container.zoomed-out .task-item {
+            padding: 3px;
+            font-size: 0.6em;
+            min-height: 20px;
+        }
+        
+        .timeline-container.zoomed-out .plan-header {
+            padding: 8px;
+            font-size: 0.8em;
         }
         
         .timeline-grid {
@@ -573,6 +596,7 @@
         <button id="jumpToWeekBtn">📍 Jump to Current Week</button>
         <button id="undoBtn">↩️ Undo</button>
         <button id="redoBtn">↪️ Redo</button>
+        <button id="fitAllBtn">📐 Fit All</button>
         <button id="addColBtn">Add Column ➕</button>
     </div>
     
@@ -1172,13 +1196,47 @@
             const plan = plans.find(p => p.id === planId);
             const task = plan.tasks[taskIndex];
             
+            // Edit text
             const newText = prompt('Edit task:', task.text);
-            if (newText && newText.trim()) {
-                saveState();
-                task.text = newText.trim();
-                saveToLocalStorage();
-                renderDashboard();
+            if (!newText || !newText.trim()) return;
+            
+            // Select new column
+            let columnOptions = plans.map((p, i) => `${i + 1}. ${p.name}`).join('\n');
+            const currentPlanIdx = plans.findIndex(p => p.id === planId);
+            const newColumnStr = prompt(`Move to which column?\n${columnOptions}\n\nCurrent: ${currentPlanIdx + 1}. ${plan.name}\nEnter number (or leave blank to keep):`, '');
+            
+            let newPlanId = planId;
+            if (newColumnStr && newColumnStr.trim()) {
+                const colNum = parseInt(newColumnStr) - 1;
+                if (colNum >= 0 && colNum < plans.length) {
+                    newPlanId = plans[colNum].id;
+                }
             }
+            
+            // Select new week
+            const newWeek = prompt('Change week? (1-52, or leave blank to keep):', task.week);
+            
+            saveState();
+            
+            // If moving to different column, remove from old and add to new
+            if (newPlanId !== planId) {
+                plan.tasks.splice(taskIndex, 1);
+                const newPlan = plans.find(p => p.id === newPlanId);
+                newPlan.tasks.push({
+                    text: newText.trim(),
+                    week: newWeek && newWeek.trim() ? newWeek.trim() : task.week,
+                    status: task.status
+                });
+            } else {
+                // Just update in place
+                task.text = newText.trim();
+                if (newWeek && newWeek.trim()) {
+                    task.week = newWeek.trim();
+                }
+            }
+            
+            saveToLocalStorage();
+            renderDashboard();
         }
         
         function deleteTask(planId, taskIndex) {
@@ -1406,6 +1464,26 @@
         
         document.getElementById('redoBtn').addEventListener('click', function() {
             redo();
+        });
+        
+        document.getElementById('fitAllBtn').addEventListener('click', function() {
+            // Calculate zoom level to fit all columns
+            const grid = document.getElementById('timelineGrid');
+            const container = document.querySelector('.timeline-container');
+            const gridWidth = grid.scrollWidth;
+            const containerWidth = container.clientWidth;
+            const scale = containerWidth / gridWidth;
+            
+            // Apply zoom via CSS transform
+            if (grid.style.transform && grid.style.transform !== 'scale(1)') {
+                grid.style.transform = 'scale(1)';
+                grid.style.transformOrigin = 'top left';
+                container.style.overflow = 'auto';
+            } else {
+                grid.style.transform = `scale(${scale * 0.95})`;
+                grid.style.transformOrigin = 'top left';
+                container.style.overflow = 'hidden';
+            }
         });
         
         document.getElementById('addColBtn').addEventListener('click', function() {
