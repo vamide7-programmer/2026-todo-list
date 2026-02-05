@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2026 Planning Dashboard with weekly tracking">
+    <meta name="theme-color" content="#1a4d2e">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIjIwMjYgVG8tRG8gTGlzdCIsCiAgInNob3J0X25hbWUiOiAiMjAyNiBQbGFucyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzFhNGQyZSIsCiAgInRoZW1lX2NvbG9yIjogIiMxYTRkMmUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9Jzk2JyB5PSc5NicgZm9udC1zaXplPSc4MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInJTNFJTNDcmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMjU2JyBmb250LXNpemU9JzIwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    <title>2026 To-Do List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a4d2e;
+            color: #333;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+            font-weight: bold;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            background: #f4e8d0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .controls button {
+            padding: 10px 20px;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+        
+        .controls button:hover {
+            background: #1b4332;
+        }
+        
+        .timeline-container {
+            background: #f4e8d0;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .timeline-grid {
+            display: grid;
+            gap: 0;
+            min-width: 100%;
+            position: relative;
+        }
+        
+        .week-row-wrapper {
+            display: contents;
+        }
+        
+        .week-column {
+            background: #ebe0ca;
+            padding: 15px 10px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .week-label {
+            font-weight: bold;
+            color: #1a4d2e;
+            font-size: 0.9em;
+            padding: 12px 8px;
+            background: #f4e8d0;
+            border-radius: 5px;
+            margin-bottom: 0;
+            text-align: center;
+            border-left: 4px solid #2d6a4f;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .full-width-divider {
+            grid-column: 1 / -1;
+            height: 1px;
+            background: #999;
+            margin: 0;
+            width: 100%;
+        }
+        
+        .full-width-divider.month-end {
+            height: 1px;
+            background: #999;
+        }
+        
+        .month-reflection {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px 20px;
+            background: transparent;
+            margin: 20px 0;
+        }
+        
+        .month-reflection-btn {
+            padding: 12px 40px;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .month-reflection-btn:hover {
+            background: #1b4332;
+            transform: scale(1.05);
+        }
+        
+        .month-reflection-box {
+            display: none;
+            margin-top: 20px;
+            padding: 30px;
+            background: #fffbf0;
+            border: 3px solid #2d6a4f;
+            border-radius: 12px;
+            width: 95%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .month-reflection-box.active {
+            display: block;
+        }
+        
+        .month-reflection-box textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 20px;
+            border: 2px solid #d4c5a9;
+            border-radius: 8px;
+            font-family: 'Georgia', serif;
+            font-size: 1.05em;
+            line-height: 1.6;
+            resize: vertical;
+            background: #f4e8d0;
+        }
+        
+        .reflection-label {
+            font-weight: bold;
+            color: #1a4d2e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+        }
+        
+        .plan-column {
+            background: #f4e8d0;
+            border: 2px solid #d4c5a9;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 200px;
+            position: relative;
+        }
+        
+        .plan-header {
+            background: #2d6a4f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .plan-header:hover {
+            background: #1b4332;
+        }
+        
+        .tasks-container {
+            position: relative;
+        }
+        
+        .task-item {
+            background: #f4e8d0;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 2px solid #d4c5a9;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .task-item:hover {
+            border-color: #2d6a4f;
+            transform: translateX(5px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        
+        .task-actions {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #d4c5a9;
+            gap: 8px;
+        }
+        
+        .task-item.show-actions .task-actions {
+            display: flex;
+        }
+        
+        .task-action-btn {
+            padding: 4px 10px;
+            background: #e8dcc4;
+            border: 1px solid #d4c5a9;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+        }
+        
+        .task-action-btn:hover {
+            background: #d4c5a9;
+        }
+        
+        .task-action-btn.complete {
+            background: #b8ddc8;
+            border-color: #52b788;
+        }
+        
+        .task-action-btn.complete:hover {
+            background: #a0d4b4;
+        }
+        
+        .task-action-btn.delete {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .task-action-btn.delete:hover {
+            background: #f1b6bc;
+        }
+        
+        .plan-context-menu {
+            display: none;
+            position: fixed;
+            background: white;
+            border: 2px solid #2d6a4f;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        
+        .plan-context-menu.active {
+            display: block;
+        }
+        
+        .plan-context-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: #f4e8d0;
+            border: 1px solid #d4c5a9;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+        }
+        
+        .plan-context-menu button:hover {
+            background: #e8dcc4;
+            transform: translateX(3px);
+        }
+        
+        .plan-context-menu button.delete-plan {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .plan-context-menu button.delete-plan:hover {
+            background: #f1b6bc;
+        }
+        
+        .task-item.completed {
+            background: #d4edda;
+            border-color: #52b788;
+        }
+        
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+        }
+        
+        .task-item.overdue {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .task-week {
+            font-size: 0.75em;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-text {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .task-status {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        .add-task-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #95d5b2;
+            color: #1a4d2e;
+            border: 2px dashed #2d6a4f;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .add-task-btn:hover {
+            background: #74c69d;
+            border-style: solid;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background: #f4e8d0;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .modal-content h2 {
+            color: #1a4d2e;
+            margin-bottom: 20px;
+        }
+        
+        .modal-content label {
+            display: block;
+            margin: 15px 0 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0ddd4;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            background: white;
+        }
+        
+        .modal-content textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-save {
+            background: #2d6a4f;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: #1b4332;
+        }
+        
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+        
+        .countdown-timers {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px;
+            background: rgba(244, 232, 208, 0.9);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .timer-circle {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .timer-circle:hover {
+            transform: scale(1.05);
+        }
+        
+        .timer-circle canvas {
+            display: block;
+        }
+        
+        .timer-star {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            animation: sparkle 1s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        .timer-label {
+            text-align: center;
+            font-size: 0.75em;
+            margin-top: 5px;
+            color: #1a4d2e;
+            font-weight: 600;
+            max-width: 80px;
+            word-wrap: break-word;
+        }
+        
+        .floating-add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .floating-add-btn:hover {
+            background: #1b4332;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>2026 To-Do List 🎯</h1>
+        <p>Planning paradise: Every week mapped to perfection</p>
+    </div>
+    
+    <div class="countdown-timers">
+        <div class="timer-circle" id="timer1" onclick="editTimer(0)">
+            <canvas id="canvas0" width="80" height="80"></canvas>
+            <div class="timer-star" id="star0">⭐</div>
+            <div class="timer-label" id="label0">Set Timer 1</div>
+        </div>
+        <div class="timer-circle" id="timer2" onclick="editTimer(1)">
+            <canvas id="canvas1" width="80" height="80"></canvas>
+            <div class="timer-star" id="star1">⭐</div>
+            <div class="timer-label" id="label1">Set Timer 2</div>
+        </div>
+        <div class="timer-circle" id="timer3" onclick="editTimer(2)">
+            <canvas id="canvas2" width="80" height="80"></canvas>
+            <div class="timer-star" id="star2">⭐</div>
+            <div class="timer-label" id="label2">Set Timer 3</div>
+        </div>
+        <div class="timer-circle" id="timer4" onclick="editTimer(3)">
+            <canvas id="canvas3" width="80" height="80"></canvas>
+            <div class="timer-star" id="star3">⭐</div>
+            <div class="timer-label" id="label3">Set Timer 4</div>
+        </div>
+        <div class="timer-circle" id="timer5" onclick="editTimer(4)">
+            <canvas id="canvas4" width="80" height="80"></canvas>
+            <div class="timer-star" id="star4">⭐</div>
+            <div class="timer-label" id="label4">Set Timer 5</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="jumpToWeekBtn">📍 Jump to Current Week</button>
+        <button id="undoBtn">↩️ Undo</button>
+        <button id="redoBtn">↪️ Redo</button>
+        <button id="addColBtn">Add Column ➕</button>
+    </div>
+    
+    <!-- Floating Add Task Button -->
+    <button class="floating-add-btn" id="floatingAddBtn" title="Add Task">+</button>
+    
+    <div class="timeline-container">
+        <div class="timeline-grid" id="timelineGrid">
+            <!-- Grid will be generated -->
+        </div>
+    </div>
+    
+    <!-- Modal for adding tasks -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Task</h2>
+            <label>Plan Column:</label>
+            <select id="modalPlan"></select>
+            
+            <label>Week:</label>
+            <select id="modalWeek">
+                <option value="">Select a week...</option>
+            </select>
+            
+            <label>Task Description:</label>
+            <textarea id="modalTask" placeholder="Describe what needs to be done..."></textarea>
+            
+            <label>Status:</label>
+            <select id="modalStatus">
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+            </select>
+            
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveTask()">Save Task</button>
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Plan Context Menu -->
+    <div id="planContextMenu" class="plan-context-menu">
+        <button onclick="event.stopPropagation(); window.renamePlan()">✏️ Rename Plan</button>
+        <button onclick="event.stopPropagation(); window.movePlanLeft()">⬅️ Move Left</button>
+        <button onclick="event.stopPropagation(); window.movePlanRight()">➡️ Move Right</button>
+        <button class="delete-plan" onclick="event.stopPropagation(); window.deletePlan()">🗑️ Delete Plan Column</button>
+    </div>
+    
+    <script>
+        const plans = [
+            { id: 'planA', name: 'Plan A: Mum\'s Visa', tasks: [] },
+            { id: 'planB', name: 'Plan B: Sister\'s Relocation', tasks: [] },
+            { id: 'planC', name: 'Plan C: Cornwall House', tasks: [] },
+            { id: 'planD', name: 'Plan D: Birmingham Sale', tasks: [] },
+            { id: 'planE', name: '👶 Plan E: Baby EDD', tasks: [] },
+            { id: 'planF', name: 'Plan F: Publishing Career', tasks: [] },
+            { id: 'planG', name: 'Plan G', tasks: [] },
+            { id: 'planH', name: 'Plan H', tasks: [] },
+            { id: 'planI', name: 'Plan I', tasks: [] },
+            { id: 'planJ', name: 'Plan J', tasks: [] }
+        ];
+        
+        const reflections = {};
+        let selectedPlanIndex = null;
+        
+        // Undo/Redo system
+        const undoHistory = [];
+        const redoHistory = [];
+        const MAX_UNDO = 20;
+        
+        function saveState() {
+            const state = {
+                plans: JSON.parse(JSON.stringify(plans)),
+                reflections: JSON.parse(JSON.stringify(reflections)),
+                timers: JSON.parse(JSON.stringify(timers))
+            };
+            undoHistory.push(state);
+            if (undoHistory.length > MAX_UNDO) {
+                undoHistory.shift();
+            }
+            // Clear redo history when new action is performed
+            redoHistory.length = 0;
+        }
+        
+        function undo() {
+            if (undoHistory.length === 0) {
+                alert('Nothing to undo!');
+                return;
+            }
+            
+            // Save current state to redo history
+            const currentState = {
+                plans: JSON.parse(JSON.stringify(plans)),
+                reflections: JSON.parse(JSON.stringify(reflections)),
+                timers: JSON.parse(JSON.stringify(timers))
+            };
+            redoHistory.push(currentState);
+            
+            const previousState = undoHistory.pop();
+            
+            // Restore plans
+            plans.length = 0;
+            plans.push(...previousState.plans);
+            
+            // Restore reflections
+            Object.keys(reflections).forEach(key => delete reflections[key]);
+            Object.assign(reflections, previousState.reflections);
+            
+            // Restore timers
+            timers.forEach((timer, i) => {
+                Object.assign(timer, previousState.timers[i]);
+            });
+            
+            saveToLocalStorage();
+            renderDashboard();
+            updateTimers();
+        }
+        
+        function redo() {
+            if (redoHistory.length === 0) {
+                alert('Nothing to redo!');
+                return;
+            }
+            
+            // Save current state to undo history
+            const currentState = {
+                plans: JSON.parse(JSON.stringify(plans)),
+                reflections: JSON.parse(JSON.stringify(reflections)),
+                timers: JSON.parse(JSON.stringify(timers))
+            };
+            undoHistory.push(currentState);
+            
+            const nextState = redoHistory.pop();
+            
+            // Restore plans
+            plans.length = 0;
+            plans.push(...nextState.plans);
+            
+            // Restore reflections
+            Object.keys(reflections).forEach(key => delete reflections[key]);
+            Object.assign(reflections, nextState.reflections);
+            
+            // Restore timers
+            timers.forEach((timer, i) => {
+                Object.assign(timer, nextState.timers[i]);
+            });
+            
+            saveToLocalStorage();
+            renderDashboard();
+            updateTimers();
+        }
+        
+        // Countdown timers
+        const timerColors = {
+            blue: '#0047AB',      // Deep cobalt blue
+            green: '#006400',     // Deep forest green
+            red: '#8B0000',       // Deep dark red
+            purple: '#4B0082',    // Deep indigo purple
+            yellow: '#B8860B',    // Deep golden yellow
+            pink: '#C71585',      // Deep magenta pink
+            brown: '#654321'      // Deep chocolate brown
+        };
+        
+        const timers = [
+            { label: '', targetDate: null, color: 'blue', startDate: null },
+            { label: '', targetDate: null, color: 'green', startDate: null },
+            { label: '', targetDate: null, color: 'red', startDate: null },
+            { label: '', targetDate: null, color: 'purple', startDate: null },
+            { label: '', targetDate: null, color: 'yellow', startDate: null }
+        ];
+        
+        // Generate weeks for 2026 with corrected 5th weeks
+        function generateWeeks() {
+            const weekData = [
+                // January
+                { month: 'Jan', week: '1st', start: 'Jan 4', end: 'Jan 10', isMonthEnd: false },
+                { month: 'Jan', week: '2nd', start: 'Jan 11', end: 'Jan 17', isMonthEnd: false },
+                { month: 'Jan', week: '3rd', start: 'Jan 18', end: 'Jan 24', isMonthEnd: false },
+                { month: 'Jan', week: '4th', start: 'Jan 25', end: 'Jan 31', isMonthEnd: true },
+                // February
+                { month: 'Feb', week: '1st', start: 'Feb 1', end: 'Feb 7', isMonthEnd: false },
+                { month: 'Feb', week: '2nd', start: 'Feb 8', end: 'Feb 14', isMonthEnd: false },
+                { month: 'Feb', week: '3rd', start: 'Feb 15', end: 'Feb 21', isMonthEnd: false },
+                { month: 'Feb', week: '4th', start: 'Feb 22', end: 'Feb 28', isMonthEnd: true },
+                // March
+                { month: 'Mar', week: '1st', start: 'Mar 1', end: 'Mar 7', isMonthEnd: false },
+                { month: 'Mar', week: '2nd', start: 'Mar 8', end: 'Mar 14', isMonthEnd: false },
+                { month: 'Mar', week: '3rd', start: 'Mar 15', end: 'Mar 21', isMonthEnd: false },
+                { month: 'Mar', week: '4th', start: 'Mar 22', end: 'Mar 28', isMonthEnd: false },
+                { month: 'Mar', week: '5th', start: 'Mar 29', end: 'Apr 4', isMonthEnd: true },
+                // April (adjusted)
+                { month: 'Apr', week: '1st', start: 'Apr 5', end: 'Apr 11', isMonthEnd: false },
+                { month: 'Apr', week: '2nd', start: 'Apr 12', end: 'Apr 18', isMonthEnd: false },
+                { month: 'Apr', week: '3rd', start: 'Apr 19', end: 'Apr 25', isMonthEnd: false },
+                { month: 'Apr', week: '4th', start: 'Apr 26', end: 'May 2', isMonthEnd: true },
+                // May (adjusted)
+                { month: 'May', week: '1st', start: 'May 3', end: 'May 9', isMonthEnd: false },
+                { month: 'May', week: '2nd', start: 'May 10', end: 'May 16', isMonthEnd: false },
+                { month: 'May', week: '3rd', start: 'May 17', end: 'May 23', isMonthEnd: false },
+                { month: 'May', week: '4th', start: 'May 24', end: 'May 30', isMonthEnd: true },
+                // June (starts May 31)
+                { month: 'Jun', week: '1st', start: 'May 31', end: 'Jun 6', isMonthEnd: false },
+                { month: 'Jun', week: '2nd', start: 'Jun 7', end: 'Jun 13', isMonthEnd: false },
+                { month: 'Jun', week: '3rd', start: 'Jun 14', end: 'Jun 20', isMonthEnd: false },
+                { month: 'Jun', week: '4th', start: 'Jun 21', end: 'Jun 27', isMonthEnd: false },
+                { month: 'Jun', week: '5th', start: 'Jun 28', end: 'Jul 4', isMonthEnd: true },
+                // July (adjusted)
+                { month: 'Jul', week: '1st', start: 'Jul 5', end: 'Jul 11', isMonthEnd: false },
+                { month: 'Jul', week: '2nd', start: 'Jul 12', end: 'Jul 18', isMonthEnd: false },
+                { month: 'Jul', week: '3rd', start: 'Jul 19', end: 'Jul 25', isMonthEnd: false },
+                { month: 'Jul', week: '4th', start: 'Jul 26', end: 'Aug 1', isMonthEnd: true },
+                // August (adjusted)
+                { month: 'Aug', week: '1st', start: 'Aug 2', end: 'Aug 8', isMonthEnd: false },
+                { month: 'Aug', week: '2nd', start: 'Aug 9', end: 'Aug 15', isMonthEnd: false },
+                { month: 'Aug', week: '3rd', start: 'Aug 16', end: 'Aug 22', isMonthEnd: false },
+                { month: 'Aug', week: '4th', start: 'Aug 23', end: 'Aug 29', isMonthEnd: true },
+                // September (starts Aug 30)
+                { month: 'Sep', week: '1st', start: 'Aug 30', end: 'Sep 5', isMonthEnd: false },
+                { month: 'Sep', week: '2nd', start: 'Sep 6', end: 'Sep 12', isMonthEnd: false },
+                { month: 'Sep', week: '3rd', start: 'Sep 13', end: 'Sep 19', isMonthEnd: false },
+                { month: 'Sep', week: '4th', start: 'Sep 20', end: 'Sep 26', isMonthEnd: false },
+                { month: 'Sep', week: '5th', start: 'Sep 27', end: 'Oct 3', isMonthEnd: true },
+                // October (adjusted)
+                { month: 'Oct', week: '1st', start: 'Oct 4', end: 'Oct 10', isMonthEnd: false },
+                { month: 'Oct', week: '2nd', start: 'Oct 11', end: 'Oct 17', isMonthEnd: false },
+                { month: 'Oct', week: '3rd', start: 'Oct 18', end: 'Oct 24', isMonthEnd: false },
+                { month: 'Oct', week: '4th', start: 'Oct 25', end: 'Oct 31', isMonthEnd: true },
+                // November (adjusted)
+                { month: 'Nov', week: '1st', start: 'Nov 1', end: 'Nov 7', isMonthEnd: false },
+                { month: 'Nov', week: '2nd', start: 'Nov 8', end: 'Nov 14', isMonthEnd: false },
+                { month: 'Nov', week: '3rd', start: 'Nov 15', end: 'Nov 21', isMonthEnd: false },
+                { month: 'Nov', week: '4th', start: 'Nov 22', end: 'Nov 28', isMonthEnd: true },
+                // December (starts Nov 29)
+                { month: 'Dec', week: '1st', start: 'Nov 29', end: 'Dec 5', isMonthEnd: false },
+                { month: 'Dec', week: '2nd', start: 'Dec 6', end: 'Dec 12', isMonthEnd: false },
+                { month: 'Dec', week: '3rd', start: 'Dec 13', end: 'Dec 19', isMonthEnd: false },
+                { month: 'Dec', week: '4th', start: 'Dec 20', end: 'Dec 26', isMonthEnd: false },
+                { month: 'Dec', week: '5th', start: 'Dec 27', end: 'Jan 2', isMonthEnd: true }
+            ];
+            
+            return weekData.map((w, i) => ({
+                label: `${w.month} ${w.week} week`,
+                dates: `${w.start} - ${w.end}`,
+                number: i + 1,
+                isMonthEnd: w.isMonthEnd,
+                month: w.month
+            }));
+        }
+        
+        const weeks = generateWeeks();
+        
+        function editTimer(index) {
+            const timer = timers[index];
+            
+            // Ask for label
+            const label = prompt('What are you counting down to?', timer.label || '');
+            if (label === null) return;
+            
+            // Ask for date
+            const dateStr = prompt('Enter target date (YYYY-MM-DD format, must be in 2026):', timer.targetDate || '2026-04-10');
+            if (dateStr === null) return;
+            
+            // Validate date
+            const targetDate = new Date(dateStr);
+            if (isNaN(targetDate.getTime()) || targetDate.getFullYear() !== 2026) {
+                alert('Please enter a valid date in 2026 (format: YYYY-MM-DD)');
+                return;
+            }
+            
+            // Ask for color
+            const colorOptions = Object.keys(timerColors).join(', ');
+            const color = prompt(`Choose a color (${colorOptions}):`, timer.color).toLowerCase();
+            if (!timerColors[color]) {
+                alert('Invalid color. Using default.');
+                timer.color = 'blue';
+            } else {
+                timer.color = color;
+            }
+            
+            // Save timer
+            saveState();
+            timer.label = label.trim();
+            timer.targetDate = dateStr;
+            timer.startDate = timer.startDate || new Date().toISOString().split('T')[0];
+            
+            saveToLocalStorage();
+            updateTimers();
+        }
+        
+        function updateTimers() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            timers.forEach((timer, index) => {
+                const canvas = document.getElementById(`canvas${index}`);
+                const ctx = canvas.getContext('2d');
+                const label = document.getElementById(`label${index}`);
+                const star = document.getElementById(`star${index}`);
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, 80, 80);
+                
+                if (!timer.targetDate) {
+                    // Not set up yet - show gray circle
+                    ctx.beginPath();
+                    ctx.arc(40, 40, 35, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.fill();
+                    label.textContent = `Set Timer ${index + 1}`;
+                    star.style.display = 'none';
+                    canvas.style.display = 'block';
+                    return;
+                }
+                
+                const start = new Date(timer.startDate);
+                const target = new Date(timer.targetDate);
+                start.setHours(0, 0, 0, 0);
+                target.setHours(0, 0, 0, 0);
+                
+                const totalDays = Math.ceil((target - start) / (1000 * 60 * 60 * 24));
+                const daysRemaining = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+                
+                label.textContent = timer.label;
+                
+                if (daysRemaining <= 0) {
+                    // Time's up! Show star
+                    canvas.style.display = 'none';
+                    star.style.display = 'block';
+                } else {
+                    // Draw the countdown circle
+                    canvas.style.display = 'block';
+                    star.style.display = 'none';
+                    
+                    // First draw gray background circle
+                    ctx.beginPath();
+                    ctx.arc(40, 40, 35, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.fill();
+                    
+                    // Calculate remaining percentage
+                    const percentRemaining = daysRemaining / totalDays;
+                    const endAngle = -Math.PI / 2 + (percentRemaining * 2 * Math.PI);
+                    
+                    // Draw colored arc (remaining time) - anticlockwise
+                    ctx.beginPath();
+                    ctx.moveTo(40, 40);
+                    ctx.arc(40, 40, 35, -Math.PI / 2, endAngle, false);
+                    ctx.closePath();
+                    ctx.fillStyle = timerColors[timer.color];
+                    ctx.fill();
+                    
+                    // Draw days remaining text in center
+                    ctx.fillStyle = '#000';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(daysRemaining, 40, 40);
+                }
+            });
+        }
+        
+        function renderDashboard() {
+            const grid = document.getElementById('timelineGrid');
+            grid.innerHTML = '';
+            
+            // Set grid columns dynamically based on number of plans
+            grid.style.gridTemplateColumns = `150px repeat(${plans.length}, minmax(250px, 1fr))`;
+            
+            // Add headers row
+            const weekHeader = document.createElement('div');
+            weekHeader.className = 'plan-header';
+            weekHeader.style.background = '#1a4d2e';
+            weekHeader.textContent = '📅 Weeks';
+            grid.appendChild(weekHeader);
+            
+            plans.forEach((plan, index) => {
+                const planHeader = document.createElement('div');
+                planHeader.className = 'plan-header';
+                planHeader.textContent = plan.name;
+                planHeader.onclick = (e) => showPlanContextMenu(e, index);
+                grid.appendChild(planHeader);
+            });
+            
+            // Track tasks by week for each plan
+            const tasksByWeek = {};
+            plans.forEach(plan => {
+                tasksByWeek[plan.id] = {};
+                plan.tasks.forEach(task => {
+                    if (!tasksByWeek[plan.id][task.week]) {
+                        tasksByWeek[plan.id][task.week] = [];
+                    }
+                    tasksByWeek[plan.id][task.week].push(task);
+                });
+            });
+            
+            let previousMonth = '';
+            weeks.forEach((week, idx) => {
+                // Add thin divider before first week of new month
+                if (week.month !== previousMonth && idx > 0) {
+                    const monthStartDivider = document.createElement('div');
+                    monthStartDivider.className = 'full-width-divider';
+                    grid.appendChild(monthStartDivider);
+                }
+                
+                // Week label cell
+                const weekLabel = document.createElement('div');
+                weekLabel.className = 'week-label';
+                weekLabel.innerHTML = `<strong>${week.label}</strong><br><small style="color: #666;">${week.dates}</small>`;
+                weekLabel.id = `week-${week.number}`;
+                grid.appendChild(weekLabel);
+                
+                // Plan cells for this week
+                plans.forEach(plan => {
+                    const planCell = document.createElement('div');
+                    planCell.style.padding = '10px';
+                    planCell.style.background = '#f4e8d0';
+                    planCell.style.minHeight = '80px';
+                    planCell.style.borderLeft = '1px solid #d4c5a9';
+                    planCell.style.borderRight = '1px solid #d4c5a9';
+                    planCell.style.boxSizing = 'border-box';
+                    
+                    // Add tasks for this week
+                    const weekTasks = tasksByWeek[plan.id][week.label] || [];
+                    weekTasks.forEach((task, taskIdx) => {
+                        const taskDiv = createTaskElement(plan.id, task, taskIdx, week);
+                        planCell.appendChild(taskDiv);
+                    });
+                    
+                    grid.appendChild(planCell);
+                });
+                
+                // Add divider after every week (thin for regular weeks, bold at month end)
+                const divider = document.createElement('div');
+                divider.className = `full-width-divider ${week.isMonthEnd ? 'month-end' : ''}`;
+                grid.appendChild(divider);
+                
+                // Add reflection section at month end
+                if (week.isMonthEnd && week.month !== previousMonth) {
+                    const reflectionDiv = document.createElement('div');
+                    reflectionDiv.className = 'month-reflection';
+                    reflectionDiv.innerHTML = `
+                        <button class="month-reflection-btn" onclick="toggleReflection('${week.month}')">
+                            📝 ${getMonthName(week.month)} Reflection
+                        </button>
+                        <div class="month-reflection-box" id="reflection-${week.month}">
+                            <div class="reflection-label">${getMonthName(week.month)} Reflection</div>
+                            <textarea 
+                                placeholder="How did this month go? What did you accomplish? What challenges did you face? What did you learn?"
+                                onchange="saveReflection('${week.month}', this.value)"
+                            >${reflections[week.month] || ''}</textarea>
+                        </div>
+                    `;
+                    grid.appendChild(reflectionDiv);
+                }
+                
+                // Update previousMonth after processing each week
+                if (week.isMonthEnd) {
+                    previousMonth = week.month;
+                }
+            });
+            
+            updateModalDropdown();
+        }
+        
+        function getMonthName(abbr) {
+            const monthNames = {
+                'Jan': 'January', 'Feb': 'February', 'Mar': 'March',
+                'Apr': 'April', 'May': 'May', 'Jun': 'June',
+                'Jul': 'July', 'Aug': 'August', 'Sep': 'September',
+                'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+            };
+            return monthNames[abbr] || abbr;
+        }
+        
+        function createTaskElement(planId, task, taskIdx, week) {
+            const today = new Date();
+            
+            // Determine if task is overdue
+            let isOverdue = false;
+            if (task.status !== 'completed') {
+                const endDateStr = week.dates.split(' - ')[1];
+                const endDate = new Date(endDateStr + ' 2026');
+                if (today > endDate) {
+                    isOverdue = true;
+                }
+            }
+            
+            let className = 'task-item';
+            if (task.status === 'completed') {
+                className += ' completed';
+            } else if (isOverdue) {
+                className += ' overdue';
+            }
+            
+            const taskDiv = document.createElement('div');
+            taskDiv.className = className;
+            
+            let statusEmoji = '⏳';
+            if (task.status === 'completed') statusEmoji = '✅';
+            else if (isOverdue) statusEmoji = '⚠️';
+            
+            // Find the actual task index in the plan
+            const plan = plans.find(p => p.id === planId);
+            const actualTaskIdx = plan.tasks.findIndex(t => 
+                t.week === task.week && t.text === task.text
+            );
+            
+            taskDiv.innerHTML = `
+                <div class="task-text">
+                    <span class="task-status">${statusEmoji}</span>
+                    ${task.text}
+                </div>
+                <div class="task-actions">
+                    <button class="task-action-btn complete" onclick="event.stopPropagation(); toggleTask('${planId}', ${actualTaskIdx})">
+                        ${task.status === 'completed' ? '↩️ Incomplete' : '✓ Complete'}
+                    </button>
+                    <button class="task-action-btn" onclick="event.stopPropagation(); editTask('${planId}', ${actualTaskIdx})">
+                        ✏️ Edit
+                    </button>
+                    <button class="task-action-btn delete" onclick="event.stopPropagation(); deleteTask('${planId}', ${actualTaskIdx})">
+                        🗑️ Delete
+                    </button>
+                </div>
+            `;
+            
+            // Toggle actions on click
+            taskDiv.addEventListener('click', function(e) {
+                // Close all other open task actions first
+                document.querySelectorAll('.task-item.show-actions').forEach(item => {
+                    if (item !== taskDiv) {
+                        item.classList.remove('show-actions');
+                    }
+                });
+                // Toggle this task's actions
+                taskDiv.classList.toggle('show-actions');
+            });
+            
+            return taskDiv;
+        }
+        
+        
+        function openTaskModal(planId) {
+            document.getElementById('taskModal').style.display = 'block';
+            if (planId) {
+                document.getElementById('modalPlan').value = planId;
+            }
+        }
+        
+        function toggleReflection(month) {
+            const box = document.getElementById(`reflection-${month}`);
+            box.classList.toggle('active');
+        }
+        
+        function saveReflection(month, value) {
+            reflections[month] = value;
+            saveToLocalStorage();
+        }
+        
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+            document.getElementById('modalWeek').value = '';
+            document.getElementById('modalTask').value = '';
+            document.getElementById('modalStatus').value = 'pending';
+        }
+        
+        function saveTask() {
+            const planId = document.getElementById('modalPlan').value;
+            const week = document.getElementById('modalWeek').value;
+            const text = document.getElementById('modalTask').value;
+            const status = document.getElementById('modalStatus').value;
+            
+            if (!week || !text) {
+                alert('Please fill in week and task description!');
+                return;
+            }
+            
+            saveState();
+            const plan = plans.find(p => p.id === planId);
+            plan.tasks.push({ week, text, status });
+            
+            saveToLocalStorage();
+            renderDashboard();
+            closeModal();
+        }
+        
+        function toggleTask(planId, taskIndex) {
+            saveState();
+            const plan = plans.find(p => p.id === planId);
+            plan.tasks[taskIndex].status = 
+                plan.tasks[taskIndex].status === 'completed' ? 'pending' : 'completed';
+            
+            saveToLocalStorage();
+            renderDashboard();
+        }
+        
+        function editTask(planId, taskIndex) {
+            const plan = plans.find(p => p.id === planId);
+            const task = plan.tasks[taskIndex];
+            
+            const newText = prompt('Edit task:', task.text);
+            if (newText && newText.trim()) {
+                saveState();
+                task.text = newText.trim();
+                saveToLocalStorage();
+                renderDashboard();
+            }
+        }
+        
+        function deleteTask(planId, taskIndex) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                saveState();
+                const plan = plans.find(p => p.id === planId);
+                plan.tasks.splice(taskIndex, 1);
+                saveToLocalStorage();
+                renderDashboard();
+            }
+        }
+        
+        window.addNewColumn = function() {
+            try {
+                alert('Button clicked! About to show prompt...');
+                const name = prompt('Enter name for new plan column:', 'Plan G');
+                
+                alert('You entered: "' + name + '"');
+                
+                if (!name) {
+                    alert('No name entered or cancelled');
+                    return;
+                }
+                
+                if (!name.trim()) {
+                    alert('Name is empty after trimming');
+                    return;
+                }
+                
+                const newId = 'plan' + Date.now();
+                const newPlan = { id: newId, name: name.trim(), tasks: [] };
+                
+                alert('About to add plan: ' + newPlan.name);
+                
+                plans.push(newPlan);
+                
+                alert('Plans array now has ' + plans.length + ' items');
+                
+                saveToLocalStorage();
+                
+                alert('About to render dashboard...');
+                
+                renderDashboard();
+                
+                alert('SUCCESS! Column "' + name + '" added!');
+                
+            } catch (error) {
+                alert('ERROR: ' + error.message);
+                console.error('Full error:', error);
+            }
+        };
+        
+        function editColumnName(index) {
+            const newName = prompt('Enter new name for this column:', plans[index].name);
+            if (newName && newName.trim()) {
+                plans[index].name = newName.trim();
+                saveToLocalStorage();
+                renderDashboard();
+            }
+        }
+        
+        function showPlanContextMenu(event, planIndex) {
+            event.stopPropagation();
+            selectedPlanIndex = planIndex;
+            
+            const menu = document.getElementById('planContextMenu');
+            menu.style.left = event.pageX + 'px';
+            menu.style.top = event.pageY + 'px';
+            menu.classList.add('active');
+        }
+        
+        function hidePlanContextMenu() {
+            document.getElementById('planContextMenu').classList.remove('active');
+        }
+        
+        window.renamePlan = function() {
+            if (selectedPlanIndex !== null) {
+                const newName = prompt('Enter new name for this column:', plans[selectedPlanIndex].name);
+                if (newName && newName.trim()) {
+                    saveState();
+                    plans[selectedPlanIndex].name = newName.trim();
+                    saveToLocalStorage();
+                    renderDashboard();
+                }
+                hidePlanContextMenu();
+            }
+        };
+        
+        window.movePlanLeft = function() {
+            if (selectedPlanIndex !== null && selectedPlanIndex > 0) {
+                saveState();
+                const temp = plans[selectedPlanIndex];
+                plans[selectedPlanIndex] = plans[selectedPlanIndex - 1];
+                plans[selectedPlanIndex - 1] = temp;
+                saveToLocalStorage();
+                renderDashboard();
+                hidePlanContextMenu();
+            } else {
+                alert('Cannot move left - already at the start!');
+            }
+        };
+        
+        window.movePlanRight = function() {
+            if (selectedPlanIndex !== null && selectedPlanIndex < plans.length - 1) {
+                saveState();
+                const temp = plans[selectedPlanIndex];
+                plans[selectedPlanIndex] = plans[selectedPlanIndex + 1];
+                plans[selectedPlanIndex + 1] = temp;
+                saveToLocalStorage();
+                renderDashboard();
+                hidePlanContextMenu();
+            } else {
+                alert('Cannot move right - already at the end!');
+            }
+        };
+        
+        window.deletePlan = function() {
+            if (selectedPlanIndex !== null) {
+                const planName = plans[selectedPlanIndex].name;
+                const taskCount = plans[selectedPlanIndex].tasks.length;
+                
+                let confirmMsg = `Delete "${planName}"?`;
+                if (taskCount > 0) {
+                    confirmMsg += `\n\nThis column has ${taskCount} task(s) that will be deleted.`;
+                }
+                
+                if (confirm(confirmMsg)) {
+                    saveState();
+                    plans.splice(selectedPlanIndex, 1);
+                    saveToLocalStorage();
+                    renderDashboard();
+                }
+                hidePlanContextMenu();
+            }
+        };
+        
+        function scrollToCurrentWeek() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const weekOfMonth = Math.ceil(today.getDate() / 7);
+            const approximateWeek = (currentMonth * 4) + weekOfMonth;
+            
+            const weekElement = document.getElementById(`week-${approximateWeek}`);
+            if (weekElement) {
+                weekElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to reset the entire dashboard? This cannot be undone!')) {
+                localStorage.removeItem('todoListData');
+                localStorage.removeItem('todoReflections');
+                location.reload();
+            }
+        }
+        
+        function updateModalDropdown() {
+            const planSelect = document.getElementById('modalPlan');
+            planSelect.innerHTML = '';
+            plans.forEach(plan => {
+                const option = document.createElement('option');
+                option.value = plan.id;
+                option.textContent = plan.name;
+                planSelect.appendChild(option);
+            });
+            
+            const weekSelect = document.getElementById('modalWeek');
+            weekSelect.innerHTML = '<option value="">Select a week...</option>';
+            weeks.forEach(week => {
+                const option = document.createElement('option');
+                option.value = week.label;
+                option.textContent = `${week.label} (${week.dates})`;
+                weekSelect.appendChild(option);
+            });
+        }
+        
+        function saveToLocalStorage() {
+            localStorage.setItem('todoListData', JSON.stringify(plans));
+            localStorage.setItem('todoReflections', JSON.stringify(reflections));
+            localStorage.setItem('todoTimers', JSON.stringify(timers));
+        }
+        
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('todoListData');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                plans.length = 0;
+                plans.push(...loaded);
+            }
+            
+            const savedReflections = localStorage.getItem('todoReflections');
+            if (savedReflections) {
+                Object.assign(reflections, JSON.parse(savedReflections));
+            }
+            
+            const savedTimers = localStorage.getItem('todoTimers');
+            if (savedTimers) {
+                const loadedTimers = JSON.parse(savedTimers);
+                timers.forEach((timer, i) => {
+                    if (loadedTimers[i]) {
+                        Object.assign(timer, loadedTimers[i]);
+                    }
+                });
+            }
+        }
+        
+        // Initialize
+        loadFromLocalStorage();
+        renderDashboard();
+        updateTimers();
+        
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZSkge2Uud2FpdFVudGlsKHNlbGYuc2tpcFdhaXRpbmcoKSl9KTtzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2FjdGl2YXRlJyxmdW5jdGlvbihlKXtyZXR1cm4gc2VsZi5jbGllbnRzLmNsYWltKCl9KTs=').catch(err => console.log('SW registration failed'));
+        }
+        
+        // Add event listeners to buttons
+        document.getElementById('jumpToWeekBtn').addEventListener('click', function() {
+            scrollToCurrentWeek();
+        });
+        
+        document.getElementById('undoBtn').addEventListener('click', function() {
+            undo();
+        });
+        
+        document.getElementById('redoBtn').addEventListener('click', function() {
+            redo();
+        });
+        
+        document.getElementById('addColBtn').addEventListener('click', function() {
+            const colName = prompt('Enter name for new column:', 'Plan K');
+            if (colName && colName.trim()) {
+                saveState(); // Save before changing
+                const newId = 'plan' + Date.now();
+                plans.push({ id: newId, name: colName.trim(), tasks: [] });
+                saveToLocalStorage();
+                renderDashboard();
+            }
+        });
+        
+        document.getElementById('floatingAddBtn').addEventListener('click', function() {
+            openTaskModal();
+        });
+        
+        // Hide context menu when clicking anywhere else
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.plan-context-menu') && !e.target.closest('.plan-header')) {
+                hidePlanContextMenu();
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
