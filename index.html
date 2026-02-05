@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2026 Planning Dashboard with weekly tracking">
+    <meta name="theme-color" content="#1a4d2e">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIjIwMjYgVG8tRG8gTGlzdCIsCiAgInNob3J0X25hbWUiOiAiMjAyNiBQbGFucyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzFhNGQyZSIsCiAgInRoZW1lX2NvbG9yIjogIiMxYTRkMmUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9Jzk2JyB5PSc5NicgZm9udC1zaXplPSc4MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInJTNFJTNDcmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMjU2JyBmb250LXNpemU9JzIwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
     <title>2026 To-Do List</title>
     <style>
         * {
@@ -569,6 +572,7 @@
     <div class="controls">
         <button id="jumpToWeekBtn">📍 Jump to Current Week</button>
         <button id="undoBtn">↩️ Undo</button>
+        <button id="redoBtn">↪️ Redo</button>
         <button id="addColBtn">Add Column ➕</button>
     </div>
     
@@ -634,8 +638,9 @@
         const reflections = {};
         let selectedPlanIndex = null;
         
-        // Undo system
+        // Undo/Redo system
         const undoHistory = [];
+        const redoHistory = [];
         const MAX_UNDO = 20;
         
         function saveState() {
@@ -648,6 +653,8 @@
             if (undoHistory.length > MAX_UNDO) {
                 undoHistory.shift();
             }
+            // Clear redo history when new action is performed
+            redoHistory.length = 0;
         }
         
         function undo() {
@@ -655,6 +662,14 @@
                 alert('Nothing to undo!');
                 return;
             }
+            
+            // Save current state to redo history
+            const currentState = {
+                plans: JSON.parse(JSON.stringify(plans)),
+                reflections: JSON.parse(JSON.stringify(reflections)),
+                timers: JSON.parse(JSON.stringify(timers))
+            };
+            redoHistory.push(currentState);
             
             const previousState = undoHistory.pop();
             
@@ -669,6 +684,40 @@
             // Restore timers
             timers.forEach((timer, i) => {
                 Object.assign(timer, previousState.timers[i]);
+            });
+            
+            saveToLocalStorage();
+            renderDashboard();
+            updateTimers();
+        }
+        
+        function redo() {
+            if (redoHistory.length === 0) {
+                alert('Nothing to redo!');
+                return;
+            }
+            
+            // Save current state to undo history
+            const currentState = {
+                plans: JSON.parse(JSON.stringify(plans)),
+                reflections: JSON.parse(JSON.stringify(reflections)),
+                timers: JSON.parse(JSON.stringify(timers))
+            };
+            undoHistory.push(currentState);
+            
+            const nextState = redoHistory.pop();
+            
+            // Restore plans
+            plans.length = 0;
+            plans.push(...nextState.plans);
+            
+            // Restore reflections
+            Object.keys(reflections).forEach(key => delete reflections[key]);
+            Object.assign(reflections, nextState.reflections);
+            
+            // Restore timers
+            timers.forEach((timer, i) => {
+                Object.assign(timer, nextState.timers[i]);
             });
             
             saveToLocalStorage();
@@ -874,6 +923,13 @@
                     ctx.closePath();
                     ctx.fillStyle = timerColors[timer.color];
                     ctx.fill();
+                    
+                    // Draw days remaining text in center
+                    ctx.fillStyle = '#000';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(daysRemaining, 40, 40);
                 }
             });
         }
@@ -1334,6 +1390,11 @@
         renderDashboard();
         updateTimers();
         
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZSkge2Uud2FpdFVudGlsKHNlbGYuc2tpcFdhaXRpbmcoKSl9KTtzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2FjdGl2YXRlJyxmdW5jdGlvbihlKXtyZXR1cm4gc2VsZi5jbGllbnRzLmNsYWltKCl9KTs=').catch(err => console.log('SW registration failed'));
+        }
+        
         // Add event listeners to buttons
         document.getElementById('jumpToWeekBtn').addEventListener('click', function() {
             scrollToCurrentWeek();
@@ -1341,6 +1402,10 @@
         
         document.getElementById('undoBtn').addEventListener('click', function() {
             undo();
+        });
+        
+        document.getElementById('redoBtn').addEventListener('click', function() {
+            redo();
         });
         
         document.getElementById('addColBtn').addEventListener('click', function() {
