@@ -255,7 +255,7 @@
         
         /* RAINBOW ARCH FOR HABITS */
         .habits-column {
-            background: #f9f3e8;
+            background: #f4e8d0;
             padding: 15px 10px;
             border-radius: 10px;
             position: relative;
@@ -264,7 +264,7 @@
         }
         
         .habits-column:hover {
-            background: #f5eed8;
+            background: #ede2c8;
         }
         
         @keyframes sparkle {
@@ -1434,7 +1434,7 @@
             if (!allComplete && !isFuture) {
                 habitData.forEach((data, idx) => {
                     if (data.progress > 0) {
-                        const radius = 95 - (idx * 17);
+                        const radius = 95 - (idx * 12);
                         // End angle based on progress
                         const progressAngle = Math.PI - (data.progress / 100) * Math.PI;
                         const emojiX = centerX + radius * Math.cos(progressAngle);
@@ -1467,7 +1467,7 @@
                 ctx.clearRect(0, 0, width, height);
                 
                 habitData.forEach((data, idx) => {
-                    const radius = 95 - (idx * 17);
+                    const radius = 95 - (idx * 12);
                     const color = habitColors[data.color];
                     
                     console.log(`Week ${weekNum}, Habit ${idx} (${data.color}): ${data.progress.toFixed(1)}% progress, daysLogged calculation in data object`);
