@@ -282,17 +282,42 @@
         
         .confetti {
             position: fixed;
-            width: 10px;
-            height: 10px;
+            top: -20px; /* Start above screen */
+            width: 12px;
+            height: 12px;
             background: gold;
+            border-radius: 50%;
             animation: fall 3s linear;
             z-index: 9999;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
         }
         
         @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh + 50px)) rotate(720deg);
                 opacity: 0;
+            }
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { 
+                transform: translateX(-50%) scale(1);
+            }
+            50% { 
+                transform: translateX(-50%) scale(1.1);
+            }
+        }
+        
+        @keyframes gentlePulseFlipped {
+            0%, 100% { 
+                transform: translateX(-50%) scaleX(-1) scale(1);
+            }
+            50% { 
+                transform: translateX(-50%) scaleX(-1) scale(1.1);
             }
         }
         
@@ -1420,11 +1445,14 @@
                 });
             }
             
-            // Add sun behind cloud when complete - one per week, centered at the end
+            // Add two sun behind cloud emojis when complete - mirrored arrangement side by side
             if (allComplete) {
-                const sunX = centerX + 100; // Position at the right end of the rainbow
+                const sunX = centerX + 65; // Position closer to align with rainbow end
                 const sunY = baseY - 15;
-                html += `<div style="position: absolute; left: ${sunX}px; top: ${sunY}px; transform: translateX(-50%); font-size: 2.5em; z-index: 10;">🌤</div>`;
+                // Left emoji: FLIPPED 🌤 (cloud on left after flip) with pulse animation
+                html += `<div style="position: absolute; left: ${sunX - 20}px; top: ${sunY}px; transform: translateX(-50%) scaleX(-1); font-size: 2.5em; z-index: 10; animation: gentlePulseFlipped 2s ease-in-out infinite;">🌤</div>`;
+                // Right emoji: normal 🌤 (sun on left, cloud on right) with pulse animation
+                html += `<div style="position: absolute; left: ${sunX + 20}px; top: ${sunY}px; transform: translateX(-50%); font-size: 2.5em; z-index: 10; animation: gentlePulse 2s ease-in-out infinite;">🌤</div>`;
             }
             
             html += `</div>`;
@@ -1580,16 +1608,31 @@
         }
         
         function showConfetti() {
-            for (let i = 0; i < 100; i++) { // More confetti!
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                confetti.style.animationDuration = (3 + Math.random() * 2) + 's'; // 3-5 seconds
-                confetti.style.background = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'][Math.floor(Math.random() * 7)];
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 5000); // Remove after 5 seconds
-            }
+            const colors = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#FF1493', '#00CED1', '#FFD700'];
+            const duration = 5000; // 5 seconds total
+            const interval = 50; // Create confetti every 50ms
+            const startTime = Date.now();
+            
+            const confettiInterval = setInterval(() => {
+                if (Date.now() - startTime >= duration) {
+                    clearInterval(confettiInterval);
+                    return;
+                }
+                
+                // Create 5 confetti pieces at a time for heavy rain effect
+                for (let i = 0; i < 5; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.animationDelay = Math.random() * 0.3 + 's';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's'; // 2-4 seconds fall time
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (8 + Math.random() * 8) + 'px'; // Vary size 8-16px
+                    confetti.style.height = confetti.style.width;
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 6000); // Clean up after 6 seconds
+                }
+            }, interval);
         }
         
         function customAlert(message) {
@@ -1627,7 +1670,7 @@
             // Add Habits column header - always show and always clickable
             const habitsHeader = document.createElement('div');
             habitsHeader.className = 'plan-header';
-            habitsHeader.style.background = '#2d4a4f';
+            habitsHeader.style.background = '#2d6a4f';
             habitsHeader.style.cursor = 'pointer';
             if (!habits.some(h => h.emoji)) {
                 habitsHeader.innerHTML = '🌈 Habits ➕';
@@ -2186,6 +2229,11 @@
             grid.style.transform = `scale(${scale})`;
             grid.style.transformOrigin = 'top left';
             container.style.overflow = 'hidden';
+            
+            // Adjust container height to match scaled content
+            const gridHeight = grid.scrollHeight;
+            const scaledHeight = gridHeight * scale;
+            container.style.height = `${scaledHeight + 40}px`; // +40 for padding
         });
         
         document.getElementById('zoomInBtn').addEventListener('click', function() {
@@ -2195,6 +2243,7 @@
             grid.style.transform = 'scale(1)';
             grid.style.transformOrigin = 'top left';
             container.style.overflow = 'auto';
+            container.style.height = 'auto'; // Reset height
         });
         
         document.getElementById('addColBtn').addEventListener('click', function() {
