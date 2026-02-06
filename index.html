@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.25, maximum-scale=3.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="2026 Planning Dashboard with weekly tracking">
     <meta name="theme-color" content="#1a4d2e">
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIjIwMjYgVG8tRG8gTGlzdCIsCiAgInNob3J0X25hbWUiOiAiMjAyNiBQbGFucyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzFhNGQyZSIsCiAgInRoZW1lX2NvbG9yIjogIiMxYTRkMmUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9Jzk2JyB5PSc5NicgZm9udC1zaXplPSc4MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInJTNFJTNDcmVjdCB3aWR0aD0nNTEyJyBoZWlnaHQ9JzUxMicgZmlsbD0nJTIzMWE0ZDJlJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMjU2JyBmb250LXNpemU9JzIwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zZW0nIGZpbGw9J3doaXRlJyUzRTI2JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
@@ -18,8 +18,11 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #1a4d2e;
             color: #333;
-            padding: 20px;
+            padding: 20px 20px 40px 20px;
             overflow-x: auto;
+            min-height: 100vh;
+            height: auto;
+            margin: 0;
         }
         
         .header {
@@ -46,10 +49,20 @@
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .button-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .button-stack button {
+            width: 100%;
         }
         
         .controls button {
@@ -59,8 +72,9 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 0.95em;
             transition: background 0.3s ease;
+            white-space: nowrap;
         }
         
         .controls button:hover {
@@ -75,6 +89,7 @@
             overflow-x: auto;
             position: relative;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
         
         .timeline-container.zoomed-out {
@@ -236,6 +251,49 @@
         
         .plan-header:hover {
             background: #1b4332;
+        }
+        
+        /* RAINBOW ARCH FOR HABITS */
+        .habits-column {
+            background: #f9f3e8;
+            padding: 15px 10px;
+            border-radius: 10px;
+            position: relative;
+            min-height: 180px;
+            cursor: pointer;
+        }
+        
+        .habits-column:hover {
+            background: #f5eed8;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { 
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+                filter: drop-shadow(0 0 10px gold);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: translateX(-50%) scale(1.2);
+                filter: drop-shadow(0 0 20px gold) brightness(1.5);
+            }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: gold;
+            animation: fall 3s linear;
+            z-index: 9999;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         .tasks-container {
@@ -532,9 +590,9 @@
         }
         
         .floating-add-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
             width: 70px;
             height: 70px;
             border-radius: 50%;
@@ -545,9 +603,10 @@
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
-            z-index: 999;
+            z-index: 999999 !important;
             display: flex;
             align-items: center;
+            will-change: transform;
             justify-content: center;
         }
         
@@ -565,6 +624,7 @@
     </div>
     
     <div class="countdown-timers">
+        <h2 style="color: #1a4d2e; margin: 0 0 15px 0; font-size: 2em; width: 100%; text-align: center; font-weight: bold; font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;">Milestones Timer</h2>
         <div class="timer-circle" id="timer1" onclick="editTimer(0)">
             <canvas id="canvas0" width="80" height="80"></canvas>
             <div class="timer-star" id="star0">⭐</div>
@@ -593,11 +653,18 @@
     </div>
     
     <div class="controls">
-        <button id="jumpToWeekBtn">📍 Jump to Current Week</button>
-        <button id="undoBtn">↩️ Undo</button>
-        <button id="redoBtn">↪️ Redo</button>
-        <button id="fitAllBtn">📐 Fit All</button>
-        <button id="addColBtn">Add Column ➕</button>
+        <div class="button-stack">
+            <button id="jumpToWeekBtn">📍 Jump to Current Week</button>
+            <button id="addColBtn">➕ Add Column</button>
+        </div>
+        <div class="button-stack">
+            <button id="undoBtn">↩️ Undo</button>
+            <button id="redoBtn">↪️ Redo</button>
+        </div>
+        <div class="button-stack">
+            <button id="zoomOutBtn">🔍- Out</button>
+            <button id="zoomInBtn">🔍+ In</button>
+        </div>
     </div>
     
     <!-- Floating Add Task Button -->
@@ -606,6 +673,25 @@
     <div class="timeline-container">
         <div class="timeline-grid" id="timelineGrid">
             <!-- Grid will be generated -->
+        </div>
+    </div>
+    
+    <!-- Annual Achievement Tracker -->
+    <div id="annualTracker" style="max-width: 1200px; margin: 40px auto 60px auto; padding: 30px; background: #f4e8d0; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        <h2 style="text-align: center; color: #1a4d2e; margin-bottom: 20px; font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 2em;">2026 Annual Achievement</h2>
+        
+        <div style="position: relative; height: 60px; background: #fff; border-radius: 30px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px;">
+            <div id="annualProgressBar" style="height: 100%; width: 0%; background: #e0e0e0; transition: width 0.5s ease, background 0.5s ease; border-radius: 30px;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.3em; font-weight: bold; color: #1a4d2e; text-shadow: 0 0 3px white;"><span id="annualProgress">0</span>/42 weeks (80%)</div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div id="annualTrophy" style="font-size: 4em; opacity: 0.2; transition: all 0.5s ease;">🏆</div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #1a4d2e;">What does your annual trophy represent?</label>
+            <input type="text" id="trophyPrize" placeholder="E.g., Trip to Bali, New car, Career milestone..." style="width: 100%; padding: 15px; border: 2px solid #2d6a4f; border-radius: 10px; font-size: 1.1em; box-sizing: border-box;" onchange="saveTrophyPrize(this.value)">
         </div>
     </div>
     
@@ -683,7 +769,7 @@
         
         function undo() {
             if (undoHistory.length === 0) {
-                alert('Nothing to undo!');
+                customAlert('Nothing to undo!');
                 return;
             }
             
@@ -717,7 +803,7 @@
         
         function redo() {
             if (redoHistory.length === 0) {
-                alert('Nothing to redo!');
+                customAlert('Nothing to redo!');
                 return;
             }
             
@@ -767,6 +853,96 @@
             { label: '', targetDate: null, color: 'purple', startDate: null },
             { label: '', targetDate: null, color: 'yellow', startDate: null }
         ];
+        
+        // HABIT TRACKING - Rainbow tracks!
+        const habitColors = {
+            red: '#FF0000',
+            orange: '#FF7F00',
+            yellow: '#FFFF00',
+            green: '#00FF00',
+            blue: '#87CEEB',  // Baby blue (Sky Blue)
+            indigo: '#4B0082',
+            violet: '#9400D3'
+        };
+        
+        // Max 5 habits
+        let habits = [
+            { emoji: '', name: '', color: 'red', frequency: 7, weeklyLogs: {} }
+            // weeklyLogs format: { '1': [true, false, true, true, false, true, true] }
+        ];
+        
+        // Annual achievement tracking
+        let potsOfGold = []; // Array of week numbers that earned pots
+        const ANNUAL_GOAL = 42; // 42 out of 52 weeks
+        let trophyPrize = '';
+        
+        function updateAnnualTracker() {
+            const progress = potsOfGold.length;
+            const percentage = Math.min(100, (progress / ANNUAL_GOAL) * 100);
+            
+            const progressBar = document.getElementById('annualProgressBar');
+            const progressText = document.getElementById('annualProgress');
+            const trophy = document.getElementById('annualTrophy');
+            
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                
+                // Progressive rainbow: each completed week adds next color
+                // ROYGBIV = 7 colors, repeat every 7 weeks
+                const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
+                const numColors = Math.min(progress, rainbowColors.length);
+                
+                if (numColors === 0) {
+                    progressBar.style.background = '#e0e0e0';
+                } else if (numColors === 1) {
+                    progressBar.style.background = rainbowColors[0];
+                } else {
+                    // Build gradient with only completed colors
+                    const colorsToShow = rainbowColors.slice(0, numColors);
+                    progressBar.style.background = `linear-gradient(90deg, ${colorsToShow.join(', ')})`;
+                }
+            }
+            
+            if (progressText) progressText.textContent = progress;
+            
+            if (trophy) {
+                if (progress >= ANNUAL_GOAL) {
+                    trophy.style.opacity = '1';
+                    trophy.style.animation = 'sparkle 2s infinite';
+                    // Show trophy prize modal
+                    if (trophyPrize && !sessionStorage.getItem('trophyShown2026')) {
+                        showTrophyPrize();
+                        sessionStorage.setItem('trophyShown2026', 'true');
+                    }
+                } else {
+                    trophy.style.opacity = '0.2';
+                    trophy.style.animation = 'none';
+                }
+            }
+        }
+        
+        function saveTrophyPrize(prize) {
+            trophyPrize = prize;
+            saveToLocalStorage();
+        }
+        
+        function showTrophyPrize() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; z-index: 10000; animation: fadeIn 0.5s;';
+            modal.innerHTML = `
+                <div style="text-align: center; color: white; padding: 40px;">
+                    <div style="font-size: 8em; animation: sparkle 2s infinite;">🏆</div>
+                    <h1 style="font-size: 3em; margin: 20px 0; font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;">CONGRATULATIONS!</h1>
+                    <h2 style="font-size: 2em; margin: 20px 0;">You've unlocked your 2026 trophy!</h2>
+                    <div style="font-size: 1.8em; margin: 30px 0; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 15px; max-width: 600px;">
+                        ${trophyPrize || 'Your amazing achievement!'}
+                    </div>
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="padding: 15px 40px; background: gold; color: #1a4d2e; border: none; border-radius: 10px; font-size: 1.3em; cursor: pointer; font-weight: bold; margin-top: 20px;">CLAIM YOUR PRIZE! 🎉</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            showConfetti();
+        }
         
         // Generate weeks for 2026 with corrected 5th weeks
         function generateWeeks() {
@@ -862,7 +1038,7 @@
             // Validate date
             const targetDate = new Date(dateStr);
             if (isNaN(targetDate.getTime()) || targetDate.getFullYear() !== 2026) {
-                alert('Please enter a valid date in 2026 (format: YYYY-MM-DD)');
+                customAlert('Please enter a valid date in 2026 (format: YYYY-MM-DD)');
                 return;
             }
             
@@ -870,7 +1046,7 @@
             const colorOptions = Object.keys(timerColors).join(', ');
             const color = prompt(`Choose a color (${colorOptions}):`, timer.color).toLowerCase();
             if (!timerColors[color]) {
-                alert('Invalid color. Using default.');
+                customAlert('Invalid color. Using default.');
                 timer.color = 'blue';
             } else {
                 timer.color = color;
@@ -958,12 +1134,488 @@
             });
         }
         
+        // HABIT TRACKING FUNCTIONS
+        let habitSetupState = { step: 0, currentHabit: 0, totalHabits: 0, tempHabits: [] };
+        
+        function setupHabits() {
+            // If habits already exist, show overview first
+            if (habits.length > 0 && habits.some(h => h.emoji)) {
+                showHabitsOverview();
+            } else {
+                habitSetupState = { step: 0, currentHabit: 0, totalHabits: 0, tempHabits: [] };
+                showHabitSetupModal();
+            }
+        }
+        
+        function showHabitsOverview() {
+            let html = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 450px;">
+                    <h2 style="margin-top: 0; text-align: center;">Your Daily Habits</h2>
+                    <div style="margin: 20px 0;">
+                        ${habits.map((habit, idx) => {
+                            if (!habit.emoji) return '';
+                            return `
+                                <div onclick="editHabit(${idx})" style="padding: 15px; margin: 10px 0; background: #f4e8d0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid #ddd;">
+                                    <div style="font-size: 2em;">${habit.emoji}</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: bold; font-size: 1.1em;">${habit.name}</div>
+                                        <div style="color: #666; font-size: 0.9em;">${habit.frequency}x per week • <span style="color: ${habitColors[habit.color]};">●</span> ${habit.color}</div>
+                                    </div>
+                                    <div style="color: #2d6a4f; font-weight: bold;">Edit →</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button onclick="startFreshHabitSetup()" style="flex: 1; padding: 12px; background: #2d6a4f; color: white; border: none; border-radius: 8px; cursor: pointer;">Start Over</button>
+                        <button onclick="closeHabitSetup()" style="flex: 1; padding: 12px; background: #999; color: white; border: none; border-radius: 8px; cursor: pointer;">Done</button>
+                    </div>
+                </div>
+            `;
+            
+            const modal = document.createElement('div');
+            modal.id = 'habitSetupModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; box-sizing: border-box;';
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+        }
+        
+        function editHabit(habitIdx) {
+            habitSetupState = {
+                step: 1,
+                currentHabit: habitIdx,
+                totalHabits: habits.length,
+                tempHabits: JSON.parse(JSON.stringify(habits))
+            };
+            closeHabitSetup();
+            showHabitSetupModal();
+        }
+        
+        function startFreshHabitSetup() {
+            habitSetupState = { step: 0, currentHabit: 0, totalHabits: 0, tempHabits: [] };
+            closeHabitSetup();
+            showHabitSetupModal();
+        }
+        
+        function selectColor(color) {
+            const currentHabit = habitSetupState.tempHabits[habitSetupState.currentHabit];
+            currentHabit.color = color;
+            // Update all color boxes
+            const colorOptions = Object.keys(habitColors);
+            colorOptions.forEach(c => {
+                const box = document.getElementById(`color-${c}`);
+                if (box) {
+                    box.style.border = c === color ? '3px solid #000' : '3px solid #ddd';
+                }
+            });
+        }
+        
+        function selectFrequency(freq) {
+            const currentHabit = habitSetupState.tempHabits[habitSetupState.currentHabit];
+            currentHabit.frequency = freq;
+            // Update all frequency boxes
+            [7, 5, 3, 1].forEach(f => {
+                const box = document.getElementById(`freq-${f}`);
+                if (box) {
+                    box.style.background = f === freq ? '#2d6a4f' : '#f0f0f0';
+                    box.style.color = f === freq ? 'white' : '#333';
+                    box.style.border = f === freq ? '2px solid #2d6a4f' : '2px solid #ddd';
+                }
+            });
+        }
+        
+        function showHabitSetupModal() {
+            const state = habitSetupState;
+            let html = '';
+            
+            if (state.step === 0) {
+                // Step 1: How many habits?
+                html = `
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center;">
+                        <h2 style="margin-top: 0;">Setup Daily Habits</h2>
+                        <p>How many habits do you want to track?</p>
+                        <div style="display: flex; gap: 15px; justify-content: center; margin: 30px 0;">
+                            ${[1,2,3,4,5].map(n => `<button onclick="selectHabitCount(${n})" style="width: 60px; height: 60px; font-size: 1.5em; background: #2d6a4f; color: white; border: none; border-radius: 10px; cursor: pointer;">${n}</button>`).join('')}
+                        </div>
+                        <button onclick="closeHabitSetup()" style="padding: 10px 30px; background: #999; color: white; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    </div>
+                `;
+            } else {
+                // Step 2+: Configure each habit
+                const habitNum = state.currentHabit + 1;
+                const currentHabit = state.tempHabits[state.currentHabit] || { emoji: '', name: '', color: 'red', frequency: 7 };
+                const colorOptions = Object.keys(habitColors);
+                
+                html = `
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 450px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <button onclick="goBackHabitSetup()" style="padding: 8px 20px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer;">← Back</button>
+                            <h3 style="margin: 0;">Habit ${habitNum} of ${state.totalHabits}</h3>
+                            <div style="width: 80px;"></div>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">Emoji:</label>
+                            <input type="text" id="habitEmoji" value="${currentHabit.emoji}" placeholder="🧘 💪 📖 ✍️ 🎨" style="width: 100%; padding: 12px; font-size: 1.5em; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">Name:</label>
+                            <input type="text" id="habitName" value="${currentHabit.name}" placeholder="e.g., Yoga, Exercise, Reading" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">Frequency (days per week):</label>
+                            <div id="frequencyPicker" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                ${[7, 5, 3, 1].map(freq => `
+                                    <div onclick="selectFrequency(${freq})" id="freq-${freq}" style="flex: 1; min-width: 100px; padding: 12px; background: ${currentHabit.frequency === freq ? '#2d6a4f' : '#f0f0f0'}; color: ${currentHabit.frequency === freq ? 'white' : '#333'}; border-radius: 8px; text-align: center; border: 2px solid ${currentHabit.frequency === freq ? '#2d6a4f' : '#ddd'}; cursor: pointer;">
+                                        ${freq}x<br><small>${freq === 7 ? 'Daily' : freq === 5 ? 'Weekdays' : freq === 3 ? 'Alternate' : 'Weekly'}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 30px;">
+                            <button onclick="saveCurrentHabit()" style="flex: 1; padding: 15px; background: #2d6a4f; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em;">${habitNum < state.totalHabits ? 'Next →' : 'Finish ✓'}</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'habitSetupModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; box-sizing: border-box;';
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+        }
+        
+        function selectHabitCount(count) {
+            habitSetupState.totalHabits = count;
+            habitSetupState.step = 1;
+            // Assign colors in BGYOR order automatically (Blue, Green, Yellow, Orange, Red)
+            const colorOrder = ['blue', 'green', 'yellow', 'orange', 'red'];
+            habitSetupState.tempHabits = Array(count).fill(null).map((_, idx) => ({ 
+                emoji: '', 
+                name: '', 
+                color: colorOrder[idx] || 'blue', 
+                frequency: 7 
+            }));
+            closeHabitSetup();
+            showHabitSetupModal();
+        }
+        
+        function goBackHabitSetup() {
+            if (habitSetupState.currentHabit > 0) {
+                habitSetupState.currentHabit--;
+            } else {
+                habitSetupState.step = 0;
+            }
+            closeHabitSetup();
+            showHabitSetupModal();
+        }
+        
+        function saveCurrentHabit() {
+            const emoji = document.getElementById('habitEmoji').value.trim();
+            const name = document.getElementById('habitName').value.trim();
+            
+            if (!emoji) {
+                customAlert('Please enter an emoji!');
+                return;
+            }
+            if (!name) {
+                customAlert('Please enter a name!');
+                return;
+            }
+            
+            // Update the habit with text inputs (color and frequency already set via click handlers)
+            habitSetupState.tempHabits[habitSetupState.currentHabit].emoji = emoji;
+            habitSetupState.tempHabits[habitSetupState.currentHabit].name = name;
+            // Preserve weeklyLogs if editing existing habit
+            if (!habitSetupState.tempHabits[habitSetupState.currentHabit].weeklyLogs) {
+                habitSetupState.tempHabits[habitSetupState.currentHabit].weeklyLogs = {};
+            }
+            
+            if (habitSetupState.currentHabit < habitSetupState.totalHabits - 1) {
+                habitSetupState.currentHabit++;
+                closeHabitSetup();
+                showHabitSetupModal();
+            } else {
+                // Finished all habits
+                habits = habitSetupState.tempHabits;
+                saveToLocalStorage();
+                closeHabitSetup();
+                renderDashboard();
+            }
+        }
+        
+        function closeHabitSetup() {
+            const modal = document.getElementById('habitSetupModal');
+            if (modal) modal.remove();
+        }
+        
+        function renderRainbowTracks(weekNum) {
+            if (!habits || habits.length === 0 || !habits.some(h => h.emoji)) {
+                return ''; // Just show empty column
+            }
+            
+            // Check if this week is in the future - FIX: Use actual week boundaries
+            const today = new Date();
+            const currentWeekData = weeks.find(w => {
+                const [endMonth, endDay] = w.dates.split(' - ')[1].split(' ');
+                const monthMap = {Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11};
+                const endDate = new Date(2026, monthMap[endMonth], parseInt(endDay), 23, 59, 59);
+                return today <= endDate;
+            });
+            const currentWeekIndex = currentWeekData ? currentWeekData.number : 52;
+            const isFuture = weekNum > currentWeekIndex;
+            
+            // Calculate if all habits complete
+            let allComplete = true;
+            
+            // FORCE BGYOR color order
+            const colorOrder = ['blue', 'green', 'yellow', 'orange', 'red'];
+            
+            const habitData = habits.map((habit, idx) => {
+                if (!habit.emoji) return null;
+                
+                const weekLogs = habit.weeklyLogs[weekNum] || Array(7).fill(false);
+                const daysLogged = weekLogs.filter(Boolean).length;
+                const progress = Math.min(100, (daysLogged / habit.frequency) * 100);
+                const isComplete = daysLogged >= habit.frequency;
+                
+                // Debug logging
+                console.log(`Week ${weekNum}, Habit ${idx}: ${daysLogged}/${habit.frequency} days = ${progress.toFixed(1)}%`, weekLogs);
+                
+                if (!isComplete) allComplete = false;
+                
+                const forcedColor = colorOrder[idx] || 'blue';
+                
+                return { habit, progress, isComplete, idx, color: forcedColor };
+            }).filter(Boolean);
+            
+            const canvasId = `rainbow-canvas-${weekNum}`;
+            const width = 260;
+            const height = 120;
+            const centerX = width / 2;
+            const baseY = height - 5;
+            
+            // Generate HTML with canvas
+            let html = `
+                <div style="position: relative; width: 100%; height: ${height + 30}px; margin-top: 5px; ${isFuture ? 'opacity: 0.4; pointer-events: none;' : ''}">
+                    <canvas id="${canvasId}" width="${width}" height="${height}" style="position: absolute; top: 0; left: 0; width: 100%;"></canvas>
+            `;
+            
+            // Add emojis at the HEAD of each arc (where progress ends)
+            if (!allComplete && !isFuture) {
+                habitData.forEach((data, idx) => {
+                    if (data.progress > 0) {
+                        const radius = 95 - (idx * 17);
+                        // End angle based on progress
+                        const progressAngle = Math.PI - (data.progress / 100) * Math.PI;
+                        const emojiX = centerX + radius * Math.cos(progressAngle);
+                        const emojiY = baseY - radius * Math.sin(progressAngle);
+                        
+                        html += `<div style="position: absolute; left: ${emojiX}px; top: ${emojiY}px; transform: translate(-50%, -50%); font-size: 1.4em; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index: 10;">${data.habit.emoji}</div>`;
+                    }
+                });
+            }
+            
+            // Add sun behind cloud when complete - one per week, centered at the end
+            if (allComplete) {
+                const sunX = centerX + 100; // Position at the right end of the rainbow
+                const sunY = baseY - 15;
+                html += `<div style="position: absolute; left: ${sunX}px; top: ${sunY}px; transform: translateX(-50%); font-size: 2.5em; z-index: 10;">🌤</div>`;
+            }
+            
+            html += `</div>`;
+            
+            // Draw arcs on canvas - ONLY UP TO PROGRESS!
+            setTimeout(() => {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                // Clear canvas first to prevent multiple draws
+                ctx.clearRect(0, 0, width, height);
+                
+                habitData.forEach((data, idx) => {
+                    const radius = 95 - (idx * 17);
+                    const color = habitColors[data.color];
+                    
+                    console.log(`Week ${weekNum}, Habit ${idx} (${data.color}): ${data.progress.toFixed(1)}% progress, daysLogged calculation in data object`);
+                    
+                    // Reset context state before each arc
+                    ctx.save();
+                    
+                    // Gray base arc (FULL semicircle)
+                    ctx.beginPath();
+                    ctx.arc(centerX, baseY, radius, Math.PI, 0, false);
+                    ctx.strokeStyle = '#d0d0d0';
+                    ctx.lineWidth = 11;
+                    ctx.lineCap = 'round';
+                    ctx.globalAlpha = 0.25;
+                    ctx.shadowBlur = 0;
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                    ctx.save();
+                    
+                    // Colored progress arc - ONLY draw up to progress percentage!
+                    if (data.progress > 0) {
+                        // Draw CLOCKWISE from 180° (left) toward 0° (right)
+                        // For 43%: go 43% of the semicircle = 180° + (43% × 180°) = 257.4°
+                        const progressRadians = (Math.min(100, data.progress) / 100) * Math.PI;
+                        const endAngle = Math.PI + progressRadians;
+                        
+                        console.log(`Progress ${data.progress}%: Drawing CLOCKWISE from ${(Math.PI * 180/Math.PI).toFixed(0)}° to ${(endAngle * 180/Math.PI).toFixed(1)}°`);
+                        
+                        ctx.beginPath();
+                        ctx.arc(centerX, baseY, radius, Math.PI, endAngle, false); // FALSE = CLOCKWISE!
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 11;
+                        ctx.lineCap = 'round';
+                        ctx.globalAlpha = 0.95;
+                        ctx.shadowColor = color;
+                        ctx.shadowBlur = 8;
+                        ctx.stroke();
+                    }
+                    
+                    ctx.restore();
+                });
+            }, 50);
+            
+            return html;
+        }
+        
+        function openHabitLogger(weekNum) {
+            if (!habits || !habits.some(h => h.emoji)) {
+                customAlert('Please set up your habits first! Click "🌈 Habits ➕"');
+                return;
+            }
+            
+            // Block future weeks - FIX: Use actual week boundaries from the weeks array
+            const today = new Date();
+            const currentWeekData = weeks.find(w => {
+                // Parse the week's end date
+                const [endMonth, endDay] = w.dates.split(' - ')[1].split(' ');
+                const monthMap = {Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11};
+                const endDate = new Date(2026, monthMap[endMonth], parseInt(endDay), 23, 59, 59);
+                return today <= endDate;
+            });
+            
+            const currentWeekIndex = currentWeekData ? currentWeekData.number : 52;
+            
+            if (weekNum > currentWeekIndex) {
+                customAlert('Cannot log habits for future weeks! Only current and past weeks can be logged.');
+                return;
+            }
+            
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            let html = `<div style="background: white; padding: 20px; border-radius: 10px; max-width: 400px;">\n<h3>Week ${weekNum} Habit Tracker</h3>\n`;
+            
+            habits.forEach((habit, hIdx) => {
+                if (!habit.emoji) return;
+                const weekLogs = habit.weeklyLogs[weekNum] || Array(7).fill(false);
+                html += `<div style="margin: 15px 0; padding: 10px; background: #f4e8d0; border-radius: 8px;">
+                    <div style="font-size: 1.2em; margin-bottom: 10px;">${habit.emoji} ${habit.name} (${habit.frequency}x/week)</div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">`;
+                
+                days.forEach((day, dIdx) => {
+                    const checked = weekLogs[dIdx] ? 'checked' : '';
+                    html += `<label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" ${checked} onchange="toggleHabitDay(${weekNum}, ${hIdx}, ${dIdx})">
+                        <span>${day}</span>
+                    </label>`;
+                });
+                
+                html += `</div></div>`;
+            });
+            
+            html += `<button onclick="closeHabitLogger()" style="margin-top: 10px; padding: 10px 20px; background: #2d6a4f; color: white; border: none; border-radius: 8px; cursor: pointer;">Done</button></div>`;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'habitLoggerModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+            modal.innerHTML = html;
+            modal.onclick = (e) => { if (e.target === modal) closeHabitLogger(); };
+            document.body.appendChild(modal);
+        }
+        
+        function toggleHabitDay(weekNum, habitIdx, dayIdx) {
+            if (!habits[habitIdx].weeklyLogs[weekNum]) {
+                habits[habitIdx].weeklyLogs[weekNum] = Array(7).fill(false);
+            }
+            habits[habitIdx].weeklyLogs[weekNum][dayIdx] = !habits[habitIdx].weeklyLogs[weekNum][dayIdx];
+            
+            // Check if week is complete
+            const allComplete = habits.every(habit => {
+                if (!habit.emoji) return true;
+                const logs = habit.weeklyLogs[weekNum] || Array(7).fill(false);
+                return logs.filter(Boolean).length >= habit.frequency;
+            });
+            
+            // FIX: Update potsOfGold array properly
+            const potIndex = potsOfGold.indexOf(weekNum);
+            if (allComplete && potIndex === -1) {
+                // Week just became complete - add it
+                potsOfGold.push(weekNum);
+                showConfetti();
+                updateAnnualTracker();
+            } else if (!allComplete && potIndex !== -1) {
+                // Week is no longer complete - remove it
+                potsOfGold.splice(potIndex, 1);
+                updateAnnualTracker();
+            }
+            
+            saveToLocalStorage();
+            // Don't refresh modal - just let checkboxes update naturally
+            // The dashboard will update when modal closes
+        }
+        
+        function closeHabitLogger() {
+            const modal = document.getElementById('habitLoggerModal');
+            if (modal) modal.remove();
+            renderDashboard(); // Refresh to show updated tracks
+        }
+        
+        function showConfetti() {
+            for (let i = 0; i < 100; i++) { // More confetti!
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (3 + Math.random() * 2) + 's'; // 3-5 seconds
+                confetti.style.background = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'][Math.floor(Math.random() * 7)];
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000); // Remove after 5 seconds
+            }
+        }
+        
+        function customAlert(message) {
+            const modal = document.createElement('div');
+            modal.id = 'customAlertModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10001;';
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 350px; text-align: center;">
+                    <p style="font-size: 1.1em; margin: 0 0 20px 0;">${message}</p>
+                    <button id="customAlertOkBtn" style="padding: 12px 40px; background: #2d6a4f; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em;">OK</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add click handler after modal is in DOM
+            document.getElementById('customAlertOkBtn').onclick = function() {
+                modal.remove();
+            };
+        }
+        
         function renderDashboard() {
             const grid = document.getElementById('timelineGrid');
             grid.innerHTML = '';
             
-            // Set grid columns dynamically based on number of plans
-            grid.style.gridTemplateColumns = `150px repeat(${plans.length}, minmax(250px, 1fr))`;
+            // Always show habits column - wider for rainbow arch
+            grid.style.gridTemplateColumns = `150px 280px repeat(${plans.length}, minmax(250px, 1fr))`;
             
             // Add headers row
             const weekHeader = document.createElement('div');
@@ -971,6 +1623,19 @@
             weekHeader.style.background = '#1a4d2e';
             weekHeader.textContent = '📅 Weeks';
             grid.appendChild(weekHeader);
+            
+            // Add Habits column header - always show and always clickable
+            const habitsHeader = document.createElement('div');
+            habitsHeader.className = 'plan-header';
+            habitsHeader.style.background = '#2d4a4f';
+            habitsHeader.style.cursor = 'pointer';
+            if (!habits.some(h => h.emoji)) {
+                habitsHeader.innerHTML = '🌈 Habits ➕';
+            } else {
+                habitsHeader.innerHTML = '🌈 Habits';
+            }
+            habitsHeader.onclick = setupHabits;
+            grid.appendChild(habitsHeader);
             
             plans.forEach((plan, index) => {
                 const planHeader = document.createElement('div');
@@ -1007,6 +1672,13 @@
                 weekLabel.innerHTML = `<strong>${week.label}</strong><br><small style="color: #666;">${week.dates}</small>`;
                 weekLabel.id = `week-${week.number}`;
                 grid.appendChild(weekLabel);
+                
+                // Add Habits Racing Track - always show
+                const habitsCell = document.createElement('div');
+                habitsCell.className = 'habits-column';
+                habitsCell.onclick = () => habits.some(h => h.emoji) ? openHabitLogger(week.number) : setupHabits();
+                habitsCell.innerHTML = renderRainbowTracks(week.number);
+                grid.appendChild(habitsCell);
                 
                 // Plan cells for this week
                 plans.forEach(plan => {
@@ -1169,7 +1841,7 @@
             const status = document.getElementById('modalStatus').value;
             
             if (!week || !text) {
-                alert('Please fill in week and task description!');
+                customAlert('Please fill in week and task description!');
                 return;
             }
             
@@ -1335,7 +2007,7 @@
                 renderDashboard();
                 hidePlanContextMenu();
             } else {
-                alert('Cannot move left - already at the start!');
+                customAlert('Cannot move left - already at the start!');
             }
         };
         
@@ -1349,7 +2021,7 @@
                 renderDashboard();
                 hidePlanContextMenu();
             } else {
-                alert('Cannot move right - already at the end!');
+                customAlert('Cannot move right - already at the end!');
             }
         };
         
@@ -1417,6 +2089,9 @@
             localStorage.setItem('todoListData', JSON.stringify(plans));
             localStorage.setItem('todoReflections', JSON.stringify(reflections));
             localStorage.setItem('todoTimers', JSON.stringify(timers));
+            localStorage.setItem('todoHabits', JSON.stringify(habits));
+            localStorage.setItem('todoPotsOfGold', JSON.stringify(potsOfGold));
+            localStorage.setItem('todoTrophyPrize', trophyPrize);
         }
         
         function loadFromLocalStorage() {
@@ -1441,12 +2116,47 @@
                     }
                 });
             }
+            
+            const savedHabits = localStorage.getItem('todoHabits');
+            if (savedHabits) {
+                habits.length = 0;
+                habits.push(...JSON.parse(savedHabits));
+            }
+            
+            const savedPots = localStorage.getItem('todoPotsOfGold');
+            if (savedPots) {
+                potsOfGold.length = 0;
+                potsOfGold.push(...JSON.parse(savedPots));
+            }
+            
+            // FIX: Validate and rebuild potsOfGold based on actual habit completion
+            const validatedPots = [];
+            for (let weekNum = 1; weekNum <= 52; weekNum++) {
+                const allComplete = habits.every(habit => {
+                    if (!habit.emoji) return true;
+                    const logs = habit.weeklyLogs[weekNum] || Array(7).fill(false);
+                    return logs.filter(Boolean).length >= habit.frequency;
+                });
+                if (allComplete) {
+                    validatedPots.push(weekNum);
+                }
+            }
+            potsOfGold = validatedPots;
+            console.log('Validated potsOfGold:', potsOfGold);
+            
+            const savedPrize = localStorage.getItem('todoTrophyPrize');
+            if (savedPrize) {
+                trophyPrize = savedPrize;
+                const prizeInput = document.getElementById('trophyPrize');
+                if (prizeInput) prizeInput.value = trophyPrize;
+            }
         }
         
         // Initialize
         loadFromLocalStorage();
         renderDashboard();
         updateTimers();
+        updateAnnualTracker();
         
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
@@ -1466,24 +2176,25 @@
             redo();
         });
         
-        document.getElementById('fitAllBtn').addEventListener('click', function() {
-            // Calculate zoom level to fit all columns
+        document.getElementById('zoomOutBtn').addEventListener('click', function() {
             const grid = document.getElementById('timelineGrid');
             const container = document.querySelector('.timeline-container');
             const gridWidth = grid.scrollWidth;
             const containerWidth = container.clientWidth;
-            const scale = containerWidth / gridWidth;
+            const scale = (containerWidth / gridWidth) * 0.95;
             
-            // Apply zoom via CSS transform
-            if (grid.style.transform && grid.style.transform !== 'scale(1)') {
-                grid.style.transform = 'scale(1)';
-                grid.style.transformOrigin = 'top left';
-                container.style.overflow = 'auto';
-            } else {
-                grid.style.transform = `scale(${scale * 0.95})`;
-                grid.style.transformOrigin = 'top left';
-                container.style.overflow = 'hidden';
-            }
+            grid.style.transform = `scale(${scale})`;
+            grid.style.transformOrigin = 'top left';
+            container.style.overflow = 'hidden';
+        });
+        
+        document.getElementById('zoomInBtn').addEventListener('click', function() {
+            const grid = document.getElementById('timelineGrid');
+            const container = document.querySelector('.timeline-container');
+            
+            grid.style.transform = 'scale(1)';
+            grid.style.transformOrigin = 'top left';
+            container.style.overflow = 'auto';
         });
         
         document.getElementById('addColBtn').addEventListener('click', function() {
